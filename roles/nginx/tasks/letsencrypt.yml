@@ -1,0 +1,17 @@
+---
+- name: "check if certificate exists"
+  stat:
+    path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+  register: certificate
+
+- name: "certbot certificate"
+  when: not certificate.stat.exists
+  shell:
+    cmd: "certbot certonly --webroot -d {{ domain }} --email dev@{{ domain }} -w /var/www/_letsencrypt -n --agree-tos --force-renewal"
+    creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+
+- name: "reload nginx on renewal"
+  copy:
+    content: "#!/bin/bash\nnginx -t && systemctl reload nginx"
+    dest: /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh
+    mode: 0755

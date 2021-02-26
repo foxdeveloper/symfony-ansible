@@ -1,0 +1,19 @@
+---
+- name: "timezone"
+  community.general.timezone:
+    name: Europe/Paris
+
+- name: "needed"
+  apt:
+    name:
+      - curl
+      - git
+      - zip
+      - unzip
+      - gcc
+      - g++
+      - make
+      - ntp
+      - certbot
+      - vim
+    update_cache: true

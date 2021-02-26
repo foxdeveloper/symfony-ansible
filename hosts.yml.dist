@@ -1,0 +1,6 @@
+remote:
+  hosts:
+    your_domain:
+      domain: your_domain
+      ansible_user: root
+      root_path: /var/www/html/your_app

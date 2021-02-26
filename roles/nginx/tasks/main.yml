@@ -1,0 +1,46 @@
+---
+- name: "install"
+  apt:
+    name: nginx
+    state: present
+
+- name: "default vhost"
+  template:
+    src: default.j2
+    dest: /etc/nginx/sites-available/default
+
+- name: "create /etc/nginx/nginx_conf directory"
+  file:
+    path: /etc/nginx/nginx_conf
+    state: directory
+
+- name: "configuration files"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/nginx/{{ item }}"
+  loop:
+    - nginx.conf
+    - nginx_conf/general.conf
+    - nginx_conf/security.conf
+    - nginx_conf/php_fastcgi.conf
+    - nginx_conf/letsencrypt.conf
+
+- name: "Vhost {{ domain }}"
+  template:
+    src: vhost.j2
+    dest: "/etc/nginx/sites-available/{{ domain }}"
+  notify:
+    - nginx reload
+
+- include_tasks: certs.yml
+
+- name: "Vhost {{ domain }} enabled"
+  file:
+    path: "/etc/nginx/sites-enabled/{{ domain }}"
+    src: "/etc/nginx/sites-available/{{ domain }}"
+    state: link
+  notify:
+    - nginx reload
+
+- include_tasks: letsencrypt.yml
+

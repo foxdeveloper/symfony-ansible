@@ -1,0 +1,16 @@
+---
+- name: Server installation
+  hosts: remote
+  become: yes
+
+  pre_tasks:
+    - name: "APT | update & upgrade"
+      become: yes
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+  roles:
+    - { role: tools, tags: tools }
+    - { role: php, tags: php }
+    - { role: nginx, tags: nginx }

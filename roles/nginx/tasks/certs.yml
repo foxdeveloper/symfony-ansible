@@ -1,0 +1,19 @@
+---
+- name: "_letsencrypt directory"
+  file:
+    path: /var/www/_letsencrypt
+    owner: www-data
+    group: www-data
+    state: directory
+
+- name: "letsencrypt certs directory"
+  file:
+    path: "/etc/letsencrypt/{{ item }}"
+    state: directory
+  loop:
+    - live
+
+- name: "SSL init"
+  shell:
+    cmd: openssl dhparam -out /etc/nginx/dhparam.pem 2048
+    creates: /etc/nginx/dhparam.pem
